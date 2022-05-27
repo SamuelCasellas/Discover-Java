@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -282,9 +283,6 @@ public class Main {
     String answerCase; // Either "English" or "For."
     boolean answeredCorrectly;
     String[] printOptions = {"a", "b", "c", "d"};
-
-    // For the lamda function for adding
-    ArrayList<String> caseCorrectArrayList = new ArrayList<>();
     
     learningHashMap = fService.getLangsHashMap(langChosen);
 
@@ -302,7 +300,7 @@ public class Main {
     // Begin quiz
     for (int i = 0; i < numQuestions; i++) {
       String[] options = new String[4];
-      TerminalService.print(lineChars[charStepper].repeat(20));
+      TerminalService.print(lineChars[charStepper % lineChars.length].repeat(20));
       charStepper++;
 
       answeredCorrectly = false;
@@ -341,26 +339,24 @@ public class Main {
       
       // Multiple choice
       if (Math.random() > 0.25) {
-        caseCorrectArrayList.add(answerCase);
-        caseCorrectArrayList.add(correctAnswer);
         // The location of the correct answer in list of options.
         int answerPos = (int) baseChance % 4;
+        String uniqueIncorrect;
+        Object[] englishPossibilities = learningHashMap.keySet().toArray();
+        Object[] foreignPossibilities= learningHashMap.values().toArray();
         // Deal out options
         for (int j = 0; j < options.length; j++) {
           if (j == answerPos)
             options[j] = correctAnswer;
           else
             {
-              String uniqueIncorrect;
-              Object[] englishPossibilities = learningHashMap.keySet().toArray();
-              Object[] foreignPossibilities= learningHashMap.values().toArray();
-
               if (answerCase.equals("English"))
+                // while loops ensure that an answer is not repeated.
                 do {
                 long chance1 = Math.round(Math.random()*100) % learningHashMap.size();
                 int chance1Int = (int) chance1;
                 uniqueIncorrect = englishPossibilities[chance1Int].toString();
-                } while (options.toString().contains(uniqueIncorrect) || (uniqueIncorrect.equals(correctAnswer)));
+                } while (Arrays.toString(options).contains(uniqueIncorrect) || (uniqueIncorrect.equals(correctAnswer)));
               
               // Foreign answer required
               else
@@ -368,7 +364,7 @@ public class Main {
                   long chance1 = Math.round(Math.random()*100) % learningHashMap.size();
                   int chance1Int = (int) chance1;
                   uniqueIncorrect = foreignPossibilities[chance1Int].toString();
-                } while (options.toString().contains(uniqueIncorrect) || (uniqueIncorrect.equals(correctAnswer)));
+                } while (Arrays.toString(options).contains(uniqueIncorrect) || (uniqueIncorrect.equals(correctAnswer)));
                 
             options[j] = uniqueIncorrect;
           }

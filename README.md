@@ -6,7 +6,6 @@ Data types used in Java:
 - HashMaps
 - Sets
 - ArrayLists
-- Lists
 
 ### MODIFICATIONS ###
 
@@ -43,9 +42,7 @@ Other things I learned:
 `Map.Entry<String, String> e : engLangHash.entrySet()`
 
 
-{Provide a link to your YouTube demonstration.  It should be a 4-5 minute demo of the software running and a walkthrough of the code.  Focus should be on sharing what you learned about the language syntax.}
-
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://youtu.be/o9oCjFDiA14)
 
 # Development Environment
 
@@ -62,6 +59,6 @@ Other things I learned:
 
 # Future Work
 
-* Item 1
-* Item 2
-* Item 3
+* Make each screen its own class.
+* After the adjustments above, implement this to a data base like Fire Base.
+* Find futher types of language activities.

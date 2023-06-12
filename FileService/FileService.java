@@ -245,6 +245,38 @@ public class FileService {
 
     }
     
+    public void eraseLang(String langChosen) throws IOException {
+      headersLangsArrayList = this.getLangsInHeader();
+      int removeLangIndex = this.getLangsIndex(langChosen);
+
+      headersLangsArrayList.remove(removeLangIndex+1);
+
+      englishWordsArrayList = this.englishWords();
+      foreignWordsArrayListOfArrayList = this.foreignWords();
+
+      // Initiate writer object for writing
+      BufferedWriter writer = new BufferedWriter(new FileWriter(this.path));
+
+      for (int i = -1; i < englishWordsArrayList.size(); i++) {
+          // Write header as unchanged
+          if (i == -1) {
+              line = formatArrayListToCsvString(headersLangsArrayList);
+              writer.write(line + "\n");
+          }
+          else {
+              String rowsEngWord = englishWordsArrayList.get(i);
+              oneLineArrayList = foreignWordsArrayListOfArrayList.get(i);
+              oneLineArrayList.remove(removeLangIndex);
+
+              oneLineArrayList.add(0, rowsEngWord);
+              line = formatArrayListToCsvString(oneLineArrayList);
+              writer.write(line + "\n");
+          }
+      }
+      writer.close();
+  }
+  
+
     public static String formatArrayListToCsvString(ArrayList<String> arrList) {
         return Arrays.toString(arrList.toArray()).replace("[", "").replace("]", "").replace(" ", "");
     }

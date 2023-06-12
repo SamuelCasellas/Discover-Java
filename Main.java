@@ -19,11 +19,13 @@ public class Main {
   static boolean quit = false;
   static HashMap<String, String> learningHashMap = new HashMap<>();
   static int wordsLearned;
+  static String mainLanguage;
 
   public static void main(String args[]) throws Exception {
     // Create instance of our file service
     // Assuming that a csv has been creating with a single header for English.
-    FileService fService = new FileService("CSV/word_list.csv");
+    FileService fService = new FileService("CSV/chinese_list.csv");
+    mainLanguage = fService.getLangsInHeader().get(0);
     menuScreen(fService);
   } 
 
@@ -43,11 +45,24 @@ public class Main {
         TerminalService.print(String.format("%s. %s", i, currentLangs.get(i)));
       }
 
-      userChoiceInt = TerminalService.inputInt("\nChoose language\nSelect # (-1 for new language) ");
+      userChoiceInt = TerminalService.inputInt("\nChoose language\nSelect # (-1 for new language, -2 to delete a language) ");
       if (userChoiceInt == -1) {
         String newLang = TerminalService.inputString("\nWhat language do you want to learn? ");
         fService.newLanguage(newLang);
         chooseSession(fService, newLang);
+      }
+      else if (userChoiceInt == -2) {
+        int deleteLangIndex = TerminalService.inputInt("\nWhat language do you want to delete?\n(Select #) ");
+        if (deleteLangIndex <= 0 || fService.getLangsInHeader().size() < deleteLangIndex) {
+          TerminalService.print("No matching language.");
+        } else {
+          String languageChosen = fService.getLangsInHeader().get(deleteLangIndex);
+          fService.eraseLang(languageChosen);
+          TerminalService.print(String.format("Language %s deleted", languageChosen));
+
+        }
+        TimeUnit.SECONDS.sleep(2);
+        menuScreen(fService);
       }
       else {
         try {
@@ -160,7 +175,7 @@ public class Main {
     }
     if (wordsLearned > 0) {
       // Display currrent words learned for further learning.
-      TerminalService.print(String.format("%-12s\t\t%s", "English", langChosen));
+      TerminalService.print(String.format("%-12s\t\t%s", mainLanguage, langChosen));
       TerminalService.print("------------\t\t------------");
       learningHashMap = fService.getLangsHashMap(langChosen);
       for (Map.Entry<String, String> e : learningHashMap.entrySet()) 
@@ -214,7 +229,7 @@ public class Main {
     do {
       userChoiceString = TerminalService.inputString(String.format
                                                     ("[%s word]: [word in %s] (Enter 0 to exit)", 
-                                                    "English", 
+                                                    mainLanguage, 
                                                     langChosen));
       userChoiceString = userChoiceString.replace(" ", "");
       String wordSplit[] = userChoiceString.split(":"); 
@@ -324,7 +339,7 @@ public class Main {
       }
       // English Answer
       else {
-        answerCase = "English";
+        answerCase = mainLanguage;
         // Find question word and associated answer
         int j = 0;
         for (Map.Entry<String, String> e : learningHashMap.entrySet()) {
@@ -350,7 +365,7 @@ public class Main {
             options[j] = correctAnswer;
           else
             {
-              if (answerCase.equals("English"))
+              if (answerCase.equals(mainLanguage))
                 // while loops ensure that an answer is not repeated.
                 do {
                 long chance1 = Math.round(Math.random()*100) % learningHashMap.size();
